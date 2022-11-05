@@ -5,15 +5,22 @@ import { AuthContext } from '../../context/AuthProvider';
 
 const Header = () => {
 
-    const {user} = useContext(AuthContext);
+    const {user, logOut} = useContext(AuthContext);
     // console.log(user.name)
 
 
     const menuitems = <>
         <li><Link to='/' className='text-black'>Home</Link></li>
+        <li><Link to='/order' className='text-black'>Order</Link></li>
         <li><Link to='/about' className='text-black'>About</Link></li>
-        <li><Link to='/services' className='text-black'>Service</Link></li>
-        <li><Link to='/login' className='text-black'>Login</Link></li>
+        {
+            user ? 
+            <>
+            <li onClick={logOut}><Link to='/login' className='text-black'>Logout</Link></li>
+            </>
+            :
+            <li><Link to='/login' className='text-black'>Login</Link></li>
+        }
     </>
 
 

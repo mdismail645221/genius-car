@@ -1,11 +1,19 @@
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import loginImg from '../../assets/login.png'
 import { AuthContext } from '../../context/AuthProvider';
+import {toast} from 'react-hot-toast'
 
 const Login = () => {
 
     const {logIn} = useContext(AuthContext);
+
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || '/';
+
+
+
 
     const handleSubmit = (event) => {
         event.preventDefault()
@@ -18,10 +26,35 @@ const Login = () => {
         logIn(email, password)
         .then(result => {
             console.log(result.user);
+            const user = result.user;
+            toast.success('successfully login')
+            form.reset()
+
+            const currenUser = {
+                email: user.email
+            }
+
+            fetch(`http://localhost:5000/jwt`, {
+                method: 'POST',
+                headers: {
+                    'content-type' : 'application/json',
+                },
+                body: JSON.stringify(currenUser)
+            })
+            .then(res=> res.json())
+            .then(data => {
+                console.log(data)
+                localStorage.setItem('genius-token', data.token)
+                navigate(from, { replace: true });
+            })
+
+
         })
         .catch((error)=> {
             console.error(error.message)
+            toast.error(error.message)
         })
+        // finally(loading(falas))
     }
 
 
